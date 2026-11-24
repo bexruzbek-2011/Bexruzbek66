@@ -1,0 +1,535 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ULTRA BRAIN - Brain Training</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:#080d1b;color:#fff;min-height:100vh}
+button,input{font:inherit}
+button{cursor:pointer;border:0}
+.hidden{display:none!important}
+#ageScreen{position:fixed;inset:0;background:linear-gradient(135deg,#080d1b,#1b2350);display:flex;align-items:center;justify-content:center;padding:20px;z-index:20}
+.age-box{width:100%;max-width:420px;background:#111b30;border:1px solid #33446d;border-radius:24px;padding:32px;text-align:center;box-shadow:0 20px 70px #0008}
+.logo{font-size:55px;margin-bottom:12px}
+h1{font-size:30px;margin-bottom:12px}
+h1 span{color:#8295ff}
+.age-box p{color:#aab5d0;line-height:1.5;margin-bottom:20px}
+input{width:100%;padding:15px;margin:7px 0;border:1px solid #34415f;background:#0a1224;color:white;border-radius:12px;outline:none}
+input:focus{border-color:#8295ff}
+.primary{padding:14px 20px;border-radius:12px;background:linear-gradient(90deg,#596ff0,#925cff);color:white;font-weight:bold;margin-top:12px}
+.age-box .primary{width:100%}
+#app{display:flex;min-height:100vh}
+.sidebar{width:240px;background:#0e1629;border-right:1px solid #202d48;padding:25px 16px;position:fixed;inset:0 auto 0 0}
+.brand{font-size:22px;font-weight:bold;padding:8px 10px 30px}
+.brand span{color:#8295ff}
+.nav button{width:100%;text-align:left;padding:14px;margin:4px 0;background:transparent;color:#aab5d0;border-radius:11px}
+.nav button:hover,.nav button.active{background:#202d50;color:white}
+.main{margin-left:240px;width:calc(100% - 240px);padding:30px;max-width:1500px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;gap:15px}
+.topbar h2{font-size:25px}
+.user-tag{background:#182442;padding:11px 15px;border-radius:12px;color:#bdcaff}
+.welcome{background:linear-gradient(110deg,#283b82,#653f9e);padding:30px;border-radius:20px;margin-bottom:25px}
+.welcome h2{font-size:27px;margin-bottom:10px}
+.welcome p{color:#e0e4ff}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:28px}
+.stat,.panel,.game-card,.play-area{background:#111b30;border:1px solid #24314d;border-radius:16px;padding:20px}
+.stat small,.muted{color:#9eacc9}
+.stat h2{font-size:27px;margin-top:12px}
+.section-title{margin:25px 0 16px}
+.game-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.game-card{transition:.2s}
+.game-card:hover{transform:translateY(-4px);border-color:#778bff}
+.game-icon{font-size:35px;margin-bottom:12px}
+.game-card h3{margin-bottom:8px}
+.game-card p{color:#9eacc9;font-size:13px;line-height:1.5;min-height:40px}
+.game-card button{background:#536df0;color:white;padding:11px 16px;border-radius:9px;margin-top:15px}
+.page{display:none}
+.page.active{display:block}
+.play-area{margin-top:20px;min-height:320px}
+.answer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}
+.answer{padding:20px;background:#202d50;color:white;border-radius:12px;font-size:20px;min-height:65px;transition:.2s}
+.answer:hover:not(:disabled){filter:brightness(1.2);transform:scale(1.02)}
+.answer:disabled{cursor:default;opacity:1}
+.question{font-size:28px;text-align:center;margin:30px 0;line-height:1.5}
+.progress{height:8px;background:#27334d;border-radius:10px;margin:15px 0;overflow:hidden}
+.progress div{height:100%;background:#8295ff;width:0;transition:.3s}
+.profile-line{padding:15px 0;border-bottom:1px solid #293550}
+.danger{background:#b83e54;color:white;padding:12px 18px;border-radius:10px;margin-top:15px}
+#message{position:fixed;bottom:25px;right:25px;background:#26385e;padding:15px 20px;border-radius:12px;display:none;z-index:30;box-shadow:0 5px 25px #0008}
+.result{text-align:center;padding:25px}
+.result h2{font-size:30px;margin:15px}
+.result .primary{display:block;width:100%;max-width:300px;margin:15px auto}
+.timer{font-size:35px;text-align:center;color:#8295ff;margin:15px}
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.game-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){
+.sidebar{width:100%;height:auto;position:fixed;top:auto;bottom:0;left:0;padding:8px;z-index:10;border-top:1px solid #293550}
+.brand{display:none}
+.nav{display:flex;justify-content:space-around}
+.nav button{font-size:11px;text-align:center;padding:12px 5px;margin:0}
+.main{margin-left:0;width:100%;padding:20px 15px 90px}
+.topbar h2{font-size:19px}
+.user-tag{font-size:12px}
+.welcome{padding:22px}
+.welcome h2{font-size:22px}
+.game-grid{grid-template-columns:1fr}
+.stats{gap:9px}
+.stat{padding:14px}
+.stat h2{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<div id="ageScreen">
+    <div class="age-box">
+        <div class="logo">🧠</div>
+        <h1>ULTRA <span>BRAIN</span></h1>
+        <p>Miyangizni rivojlantiring. Har kuni yangi natijaga erishing!</p>
+        <input id="userName" type="text" placeholder="Ismingizni kiriting">
+        <input id="userSurname" type="text" placeholder="Familiyangizni kiriting">
+        <input id="userAge" type="number" min="6" max="100" placeholder="Yoshingiz">
+        <button class="primary" onclick="registerUser()">Boshlash 🚀</button>
+    </div>
+</div>
+
+<div id="app" class="hidden">
+    <aside class="sidebar">
+        <div class="brand">🧠 ULTRA <span>BRAIN</span></div>
+        <div class="nav">
+            <button class="active" onclick="showPage('home',this)">🏠 Bosh sahifa</button>
+            <button onclick="showPage('games',this)">🎮 O‘yinlar</button>
+            <button onclick="showPage('stats',this)">📊 Natijalar</button>
+            <button onclick="showPage('profile',this)">👤 Profil</button>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <h2 id="pageTitle">Bosh sahifa</h2>
+            <div class="user-tag" id="userTag"></div>
+        </div>
+
+        <section class="page active" id="home">
+            <div class="welcome">
+                <h2 id="welcomeText">Xush kelibsiz!</h2>
+                <p>Bugun miyangizni mashq qildirishga tayyormisiz?</p>
+            </div>
+            <div class="stats">
+                <div class="stat"><small>⭐ XP ball</small><h2 id="xp">0</h2></div>
+                <div class="stat"><small>🎮 O‘ynalgan o‘yin</small><h2 id="played">0</h2></div>
+                <div class="stat"><small>🏆 Daraja</small><h2 id="level">1</h2></div>
+                <div class="stat"><small>🪙 Tangalar</small><h2 id="coins">0</h2></div>
+            </div>
+            <h2 class="section-title">🔥 Tavsiya etilgan o‘yinlar</h2>
+            <div class="game-grid" id="homeGames"></div>
+        </section>
+
+        <section class="page" id="games">
+            <h2 class="section-title">🎮 Barcha o‘yinlar</h2>
+            <p class="muted">O‘zingizga yoqqan o‘yinni tanlang.</p>
+            <div class="game-grid" id="allGames" style="margin-top:20px"></div>
+        </section>
+
+        <section class="page" id="play">
+            <button class="primary" onclick="showPage('games')">← O‘yinlarga qaytish</button>
+            <div class="play-area" id="gameArea"></div>
+        </section>
+
+        <section class="page" id="stats">
+            <div class="panel">
+                <h2>📊 Sizning natijalaringiz</h2>
+                <div class="profile-line">Jami XP: <b id="statsXP">0</b></div>
+                <div class="profile-line">O‘ynalgan o‘yinlar: <b id="statsPlayed">0</b></div>
+                <div class="profile-line">To‘g‘ri javoblar: <b id="statsCorrect">0</b></div>
+                <div class="profile-line">Daraja: <b id="statsLevel">1</b></div>
+            </div>
+        </section>
+
+        <section class="page" id="profile">
+            <div class="panel">
+                <h2>👤 Mening profilim</h2>
+                <div class="profile-line">Ism va familiya: <b id="profileName"></b></div>
+                <div class="profile-line">Yosh: <b id="profileAge"></b></div>
+                <div class="profile-line">Daraja: <b id="profileLevel"></b></div>
+                <button class="danger" onclick="resetProgress()">Progressni o‘chirish</button>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div id="message"></div>
+
+<script>
+const STORAGE_KEY="ultraBrainFixed";
+const games=[
+{id:1,icon:"🧠",title:"Xotira sinovi",desc:"Raqamlarni eslab qoling.",type:"memory"},
+{id:2,icon:"🔢",title:"Matematika",desc:"Matematik misollarni yeching.",type:"math"},
+{id:3,icon:"⚡",title:"Tezkor reaksiya",desc:"Belgilar orasidan to‘g‘risini toping.",type:"reaction"},
+{id:4,icon:"🎨",title:"Ranglar sinovi",desc:"Kerakli rangni tanlang.",type:"color"},
+{id:5,icon:"🔍",title:"Ortiqchasini top",desc:"Boshqalardan farqli belgini toping.",type:"odd"},
+{id:6,icon:"🧩",title:"Mantiq sinovi",desc:"Mantiqiy savollarga javob bering.",type:"logic"},
+{id:7,icon:"🔤",title:"So‘zlar o‘yini",desc:"So‘zlar orasidan to‘g‘risini toping.",type:"words"},
+{id:8,icon:"🔷",title:"Shakllar",desc:"Shakllarni aniqlang.",type:"shapes"},
+{id:9,icon:"🔢",title:"Ketma-ketlik",desc:"Keyingi raqamni toping.",type:"sequence"},
+{id:10,icon:"🎯",title:"Diqqat sinovi",desc:"Diqqat bilan javob bering.",type:"attention"}
+];
+
+let data={name:"",age:0,xp:0,played:0,correct:0,level:1,coins:0};
+let activeGame=null;
+let questionCount=0;
+let score=0;
+let timer=null;
+let locked=false;
+let currentQuestion=null;
+
+function saveData(){
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+}
+
+function showMessage(text){
+    const box=document.getElementById("message");
+    box.textContent=text;
+    box.style.display="block";
+    clearTimeout(box.hideTimer);
+    box.hideTimer=setTimeout(()=>box.style.display="none",1800);
+}
+
+function registerUser(){
+    const name=document.getElementById("userName").value.trim();
+    const surname=document.getElementById("userSurname").value.trim();
+    const ageText=document.getElementById("userAge").value;
+    const age=Number(ageText);
+
+    if(!name||!surname||!ageText){
+        showMessage("Ism, familiya va yoshingizni kiriting!");
+        return;
+    }
+    if(age<6||age>100){
+        showMessage("Yosh 6 dan 100 gacha bo‘lishi kerak!");
+        return;
+    }
+
+    data.name=name+" "+surname;
+    data.age=age;
+    saveData();
+    openApp();
+}
+
+function openApp(){
+    document.getElementById("ageScreen").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+    updateDashboard();
+    renderGames();
+}
+
+function updateDashboard(){
+    const values={
+        userTag:"👤 "+data.name,
+        welcomeText:"Xush kelibsiz, "+data.name+"!",
+        xp:data.xp,
+        played:data.played,
+        level:data.level,
+        coins:data.coins,
+        statsXP:data.xp,
+        statsPlayed:data.played,
+        statsCorrect:data.correct,
+        statsLevel:data.level,
+        profileName:data.name,
+        profileAge:data.age,
+        profileLevel:data.level
+    };
+    Object.entries(values).forEach(([id,value])=>{
+        document.getElementById(id).textContent=value;
+    });
+}
+
+function renderGames(){
+    const card=game=>`
+        <div class="game-card">
+            <div class="game-icon">${game.icon}</div>
+            <h3>${game.title}</h3>
+            <p>${game.desc}</p>
+            <button onclick="startGame(${game.id})">O‘ynash →</button>
+        </div>`;
+    document.getElementById("allGames").innerHTML=games.map(card).join("");
+    document.getElementById("homeGames").innerHTML=games.slice(0,3).map(card).join("");
+}
+
+function showPage(id,button){
+    clearTimeout(timer);
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    const titles={home:"Bosh sahifa",games:"O‘yinlar",play:"O‘yin",stats:"Natijalar",profile:"Profil"};
+    document.getElementById("pageTitle").textContent=titles[id];
+    document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+    if(button)button.classList.add("active");
+}
+
+function startGame(id){
+    activeGame=games.find(g=>g.id===id);
+    if(!activeGame)return;
+    clearTimeout(timer);
+    questionCount=0;
+    score=0;
+    locked=false;
+    showPage("play");
+    document.getElementById("gameArea").innerHTML=`
+        <h2>${activeGame.icon} ${activeGame.title}</h2>
+        <p class="muted">10 ta savol. Har bir to‘g‘ri javob uchun 10 XP.</p>
+        <div class="progress"><div id="progressBar"></div></div>
+        <div id="gameContent"></div>`;
+    nextQuestion();
+}
+
+function nextQuestion(){
+    clearTimeout(timer);
+    locked=false;
+
+    if(questionCount>=10){
+        finishGame();
+        return;
+    }
+
+    questionCount++;
+    document.getElementById("progressBar").style.width=(questionCount*10)+"%";
+    const type=activeGame.type;
+    let q="",answers=[],correct="",colors=null;
+
+    if(type==="math"){
+        const a=Math.floor(Math.random()*20)+1;
+        const b=Math.floor(Math.random()*20)+1;
+        const operation=Math.random()<0.5?"+":"-";
+        correct=String(operation==="+"?a+b:a-b);
+        q=`${a} ${operation} ${b} = ?`;
+        answers=makeNumberAnswers(Number(correct));
+    }
+
+    if(type==="memory"){
+        const number=String(Math.floor(1000+Math.random()*9000));
+        showMemoryQuestion(number);
+        return;
+    }
+
+    if(type==="reaction"){
+        const set=[
+            {q:"Qaysi belgi yurak?",a:["⭐","❤️","🔷","🌙"],c:"❤️"},
+            {q:"Qaysi belgi yulduz?",a:["🌙","🍎","⭐","⚽"],c:"⭐"},
+            {q:"Qaysi belgi oy?",a:["🌙","❤️","🚗","🔺"],c:"🌙"}
+        ];
+        const item=set[Math.floor(Math.random()*set.length)];
+        q=item.q;answers=item.a;correct=item.c;
+    }
+
+    if(type==="color"){
+        const palette=[
+            {name:"QIZIL",hex:"#ff3333"},
+            {name:"KO‘K",hex:"#3388ff"},
+            {name:"YASHIL",hex:"#22cc77"},
+            {name:"SARIQ",hex:"#ffdd33"}
+        ];
+        const target=palette[Math.floor(Math.random()*palette.length)];
+        q=`<span style="color:${target.hex}">Qaysi rang ${target.name}?</span>`;
+        answers=palette.map(x=>x.name);
+        correct=target.name;
+        colors=palette;
+    }
+
+    if(type==="odd"){
+        const sets=[
+            {q:"Ortiqchasini toping",a:["🍎","🍎","🍌","🍎"],c:"🍌"},
+            {q:"Ortiqchasini toping",a:["🚗","🚗","✈️","🚗"],c:"✈️"},
+            {q:"Ortiqchasini toping",a:["🐶","🐶","🐱","🐶"],c:"🐱"}
+        ];
+        const item=sets[Math.floor(Math.random()*sets.length)];
+        q=item.q;answers=item.a;correct=item.c;
+    }
+
+    if(type==="logic"){
+        const set=[
+            {q:"Haftada nechta kun bor?",a:["5","6","7","8"],c:"7"},
+            {q:"Bir yilda nechta oy bor?",a:["10","11","12","13"],c:"12"},
+            {q:"Quyosh qayerdan chiqadi?",a:["G‘arb","Sharq","Shimol","Janub"],c:"Sharq"},
+            {q:"3 ta olma va yana 2 ta olma. Jami nechta?",a:["4","5","6","7"],c:"5"}
+        ];
+        const item=set[Math.floor(Math.random()*set.length)];
+        q=item.q;answers=item.a;correct=item.c;
+    }
+
+    if(type==="words"){
+        const set=[
+            {q:"Qaysi biri meva?",a:["Stol","Olma","Kitob","Ruchka"],c:"Olma"},
+            {q:"Qaysi biri hayvon?",a:["Daraxt","Mushuk","Uy","Daftar"],c:"Mushuk"},
+            {q:"Qaysi biri transport?",a:["Mashina","Olma","Gul","Suv"],c:"Mashina"}
+        ];
+        const item=set[Math.floor(Math.random()*set.length)];
+        q=item.q;answers=item.a;correct=item.c;
+    }
+
+    if(type==="shapes"){
+        const set=[
+            {q:"Uchburchakni tanlang",a:["🔵","🟥","🔺","⭐"],c:"🔺"},
+            {q:"Doirani tanlang",a:["🔵","🟥","🔺","⭐"],c:"🔵"},
+            {q:"Kvadratni tanlang",a:["🔵","🟥","🔺","⭐"],c:"🟥"}
+        ];
+        const item=set[Math.floor(Math.random()*set.length)];
+        q=item.q;answers=item.a;correct=item.c;
+    }
+
+    if(type==="sequence"){
+        const start=Math.floor(Math.random()*8)+1;
+        const step=Math.floor(Math.random()*4)+2;
+        correct=String(start+step*4);
+        q=`${start}, ${start+step}, ${start+step*2}, ${start+step*3}, ?`;
+        answers=makeNumberAnswers(Number(correct));
+    }
+
+    if(type==="attention"){
+        const set=[
+            {q:"Faqat qizil rangli belgini tanlang",a:["🔵","🔴","🟢","🟡"],c:"🔴"},
+            {q:"Faqat ko‘k rangli belgini tanlang",a:["🟢","🟡","🔵","🔴"],c:"🔵"},
+            {q:"Faqat yashil rangli belgini tanlang",a:["🔴","🟢","🔵","🟡"],c:"🟢"}
+        ];
+        const item=set[Math.floor(Math.random()*set.length)];
+        q=item.q;answers=item.a;correct=item.c;
+    }
+
+    currentQuestion={q,answers,correct,colors};
+    renderQuestion();
+}
+
+function makeNumberAnswers(correct){
+    const set=new Set([correct]);
+    while(set.size<4){
+        let value=correct+Math.floor(Math.random()*11)-5;
+        if(value!==correct)set.add(value);
+    }
+    return [...set].map(String).sort(()=>Math.random()-0.5);
+}
+
+function showMemoryQuestion(number){
+    const content=document.getElementById("gameContent");
+    content.innerHTML=`
+        <div class="question">Raqamni eslab qoling!</div>
+        <div style="text-align:center;font-size:48px;color:#8295ff;font-weight:bold;margin:25px">${number}</div>
+        <div class="timer" id="memoryTimer">3</div>`;
+    let remaining=3;
+    const tick=()=>{
+        remaining--;
+        if(remaining>0){
+            document.getElementById("memoryTimer").textContent=remaining;
+            timer=setTimeout(tick,1000);
+        }else{
+            const wrong1=String(Number(number)+13);
+            const wrong2=String(Number(number)-21);
+            const wrong3=String(Number(number)+32);
+            const answers=[number,wrong1,wrong2,wrong3].sort(()=>Math.random()-0.5);
+            currentQuestion={q:"Qaysi raqamni eslab qoldingiz?",answers,correct:number};
+            renderQuestion();
+        }
+    };
+    timer=setTimeout(tick,1000);
+}
+
+function renderQuestion(){
+    const content=document.getElementById("gameContent");
+    content.innerHTML=`
+        <div class="question">${currentQuestion.q}</div>
+        <div class="answer-grid" id="answerGrid"></div>
+        <p class="muted" style="margin-top:20px;text-align:center">Savol ${questionCount}/10</p>`;
+    const grid=document.getElementById("answerGrid");
+
+    currentQuestion.answers.forEach(answer=>{
+        const button=document.createElement("button");
+        button.className="answer";
+        button.textContent=answer;
+
+        if(currentQuestion.colors){
+            const color=currentQuestion.colors.find(c=>c.name===answer);
+            button.style.background=color.hex;
+            button.style.color="#111";
+            button.style.fontWeight="bold";
+        }
+
+        button.addEventListener("click",()=>checkAnswer(button,answer));
+        grid.appendChild(button);
+    });
+}
+
+function checkAnswer(button,answer){
+    if(locked)return;
+    locked=true;
+
+    const correct=String(currentQuestion.correct);
+    const buttons=document.querySelectorAll(".answer");
+    buttons.forEach(b=>b.disabled=true);
+
+    if(String(answer)===correct){
+        score++;
+        button.style.background="#168c60";
+        showMessage("To‘g‘ri javob! ⭐");
+    }else{
+        button.style.background="#b83e54";
+        buttons.forEach(b=>{
+            if(b.textContent===correct){
+                b.style.background="#168c60";
+            }
+        });
+        showMessage("Noto‘g‘ri javob!");
+    }
+
+    timer=setTimeout(nextQuestion,1000);
+}
+
+function finishGame(){
+    clearTimeout(timer);
+    const earned=score*10;
+    data.played++;
+    data.correct+=score;
+    data.xp+=earned;
+    data.coins+=score*2;
+    data.level=Math.floor(data.xp/100)+1;
+    saveData();
+    updateDashboard();
+
+    document.getElementById("gameArea").innerHTML=`
+        <div class="result">
+            <div style="font-size:65px">🏆</div>
+            <h2>O‘yin tugadi!</h2>
+            <p class="muted">Sizning natijangiz</p>
+            <h2 style="color:#8295ff">${score}/10</h2>
+            <p>⭐ +${earned} XP</p>
+            <p>🪙 +${score*2} tanga</p>
+            <button class="primary" onclick="startGame(${activeGame.id})">Qayta o‘ynash</button>
+            <button class="primary" onclick="showPage('games')" style="background:#263653">Boshqa o‘yin</button>
+        </div>`;
+}
+
+function resetProgress(){
+    if(confirm("Barcha natijalarni o‘chirmoqchimisiz?")){
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+    }
+}
+
+function initializeApp(){
+    const saved=localStorage.getItem(STORAGE_KEY);
+    if(saved){
+        try{
+            const parsed=JSON.parse(saved);
+            if(parsed&&parsed.name&&parsed.age){
+                data={...data,...parsed};
+                openApp();
+            }
+        }catch(error){
+            localStorage.removeItem(STORAGE_KEY);
+        }
+    }
+}
+
+initializeApp();
+</script>
+</body>
+</html>
